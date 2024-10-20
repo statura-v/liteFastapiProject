@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 32768mb
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    # - type: tmpfs
+    # target: /dev/shm
+    # tmpfs:
+    # size: 134217728 # 128*2^20 bytes = 128Mb
+    volumes:
+      - ./../db/initdb:/docker-entrypoint-initdb.d
+      - ./../db/data:/var/lib/postgresql/data
+    
+    ports:
+      - 6434:5432
+    environment:
+      POSTGRES_DB: "shop"
+      POSTGRES_USER: "valera"
+      POSTGRES_PASSWORD: "12345678"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+  # alembic:
+  #   # build: .
+  #   image: measurements:latest
+  #   working_dir: "/measurements/PowerSensorTestSystem/Database"
+  #   command: "alembic upgrade head"
+  #   network_mode: "host"
+  #   depends_on:
+  #     - db
+  #   # ports:
+  #   # - 20001:20001
+  #   volumes:
+  #     - ./:/measurements
+  # addDataToDb:
+  #   # build: .
+  #   image: measurements:latest
+  #   working_dir: "/measurements/PowerSensorTestSystem/System/Testing"
+  #   command: "python3 -m debugpy --listen 0.0.0.0:5682 dbTest_1.py"
+  #   network_mode: "host"
+  #   depends_on:
+  #     - alembic
+  #   # ports:  
+  #   # - 20001:20001
+  #   volumes:
+  #     - ./:/measurements
