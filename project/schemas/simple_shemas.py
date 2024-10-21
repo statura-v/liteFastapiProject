@@ -1,11 +1,13 @@
 from pydantic import BaseModel
+from pydantic import EmailStr
 
 class BaseBook(BaseModel):
     title: str
     isbn: str
     year_release: int
     genre_id: int
-
+    price: float
+    count: int
 
 class BookCreate(BaseBook):
     pass
