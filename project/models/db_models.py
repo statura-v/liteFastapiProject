@@ -4,9 +4,11 @@ from typing import Annotated, List
 from datetime import datetime
 from fastapi_users.db import SQLAlchemyBaseOAuthAccountTableUUID
 
+#Большой вопрос по поводу библиотеки fastapi_users, пока дальше по плану Изучения Fastapi
+
 class BaseTable(DeclarativeBase):
     created_at = mapped_column(DateTime)
-    active: Mapped[bool] = mapped_column(Boolean)
+    # active: Mapped[bool] = mapped_column(Boolean)
 
 
 book_authors = Table("book_authors", BaseTable.metadata,
@@ -14,6 +16,7 @@ book_authors = Table("book_authors", BaseTable.metadata,
                     Column("author_id", Integer, ForeignKey("author.id")),
                     Column("book_id", Integer, ForeignKey("book.id"))
                      )
+
 
 class User(BaseTable):
     __tablename__ = "user"

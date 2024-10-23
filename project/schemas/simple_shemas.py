@@ -1,7 +1,8 @@
 from pydantic import BaseModel
-from pydantic import EmailStr
+# from pydantic import EmailStr
 
 class BaseBook(BaseModel):
+    # active: bool = True
     title: str
     isbn: str
     year_release: int
@@ -10,9 +11,9 @@ class BaseBook(BaseModel):
     count: int
 
 class BookCreate(BaseBook):
-    pass
+    author_ids: list[int]
 
-class BookUpdate(BaseBook):
+class BookUpdate(BookCreate):
     id: int
 
 class GetBook(BookUpdate):
@@ -26,4 +27,13 @@ class AuthorCreate(BaseAuthor):
 
 class AuthorUpdate(BaseAuthor):
     id: int
-    
+
+class GenreBase(BaseModel):
+    # active: bool = True
+    name_genre: str
+
+class GenreUpdate(GenreBase):
+    id: int
+
+class GenreCreate(GenreBase):
+    pass

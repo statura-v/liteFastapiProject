@@ -1,8 +1,8 @@
-"""add User
+"""new
 
-Revision ID: 0ea2352e4b81
+Revision ID: 3817f098efbf
 Revises: 
-Create Date: 2024-10-21 08:55:02.562238
+Create Date: 2024-10-23 21:35:31.214352
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0ea2352e4b81'
+revision: str = '3817f098efbf'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,14 +24,12 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('full_name', sa.String(length=256), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('genre',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name_genre', sa.String(length=128), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
@@ -44,7 +42,6 @@ def upgrade() -> None:
     sa.Column('email', sa.String(length=40), nullable=False),
     sa.Column('number_telephone', sa.String(length=20), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('book',
@@ -56,7 +53,6 @@ def upgrade() -> None:
     sa.Column('price', sa.DECIMAL(precision=2), nullable=True),
     sa.Column('count', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('active', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['genre_id'], ['genre.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

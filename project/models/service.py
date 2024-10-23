@@ -8,8 +8,16 @@ def search_book_by_title(search: str, database: Session):
    return books
 
 
-def search_book_by_author():
-    pass
+def search_book_by_author(search: str, database: Session):
+    books = []
+    author = database.query(Author).filter(Author.full_name.like(f'{search}')).all()
+    if not author:
+        return []
+    for x in author:
+        books.extend(x.books)
+
+    return list(set(books)) 
+    
 
 
 def filter_book_by_genre(asc=True): #соритировка включается внутрь фильтрации

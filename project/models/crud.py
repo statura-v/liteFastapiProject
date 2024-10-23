@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from db import get_db_session 
-from models.db_models import Book, Author
+from models.db_models import Book, Author, Genre
 from schemas.simple_shemas import *
 
 def get_book_by_id(database: Session, book_id: int):
@@ -8,7 +8,22 @@ def get_book_by_id(database: Session, book_id: int):
 
 
 def create_book(database: Session, schema: BookCreate):
-    book = Book(**schema.dict())
+    book = Book(schema.title)
+    genre = database.query(Genre).get(schema.genre_id)
+
+    if not genre:
+        return None
+    for i in schema.author_ids:
+        author = database.query(Author).get(i)
+        if author:
+            book.authors.append(author)
+
+    
+    book.isbn = schema.isbn
+    book.year_release = schema.year_release
+    book.price = schema.price
+    book.count = schema.count
+    book.genre_id = schema.genre_id
     database.add(book)
     database.commit()
     return book
@@ -27,22 +42,24 @@ def update_book(database: Session, book_id: int, schema: BookUpdate):
     book = database.query(Book).get(book_id)
     if not book:
         return book
-    # this_dict = schema.dict()
-    # print(this_dict)
-    # for key, value in this_dict:
-    #     if hasattr(book, key):
-    #         setattr(book, key, value)
+    
+    genre = database.query(Genre).get(schema.genre_id)
+    if not genre:
+        return None
+    
     book.title = schema.title
     book.isbn = schema.isbn
     book.year_release = schema.year_release
+    book.price = schema.price
+    book.count = schema.count
+    book.genre_id = schema.genre_id
+
     database.commit()
     database.refresh(book)
 
     return book
 
 def create_author(database: Session, schema: AuthorCreate):
-    # print(schema.dict())
-    # author = Author(schema.dict())
     author = Author()
     author.full_name = schema.full_name
     database.add(author)
@@ -57,4 +74,12 @@ def delete_author_by_id(author_id: int, database: Session):
     database.delete(author)
     database.commit()
     return author
+
+
+def create_genre(database: Session, schema: GenreCreate):
+    genre = Genre()
+    genre.name_genre = schema.name_genre
+    database.add(genre)
+    database.commit()
+    return genre
     
