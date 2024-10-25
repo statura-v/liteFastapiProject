@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 def search_book_by_title(search: str, database: Session):
    books = database.query(Book).filter(Book.title.like(f'%{search}%'))
    if not books:
-       return []
+       return None
    return books
 
 
