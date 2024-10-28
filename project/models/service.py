@@ -1,6 +1,6 @@
 from models.db_models import Book, Author, Genre
 from sqlalchemy.orm import Session
-from schemas.simple_shemas import BookUpdate, BookCreate
+from schemas.simple_shemas import BookUpdate, BookCreate, BookResponeWithAuthorName
 
 def search_book_by_title(search: str, limit: int, database: Session): #Работает
     books = database.query(Book).filter(Book.title.like(f'%{search}%')).limit(limit).all()
@@ -27,15 +27,28 @@ def search_book_by_title(search: str, limit: int, database: Session): #Рабо�
     return book_res
 
 
-def search_book_by_author(search: str, database: Session):
-    books_data = []
-    author = database.query(Author).filter(Author.full_name.like(f'{search}')).all()
+def search_book_by_author(search: str, limit: int, database: Session):
+    books_res = []
+    author = database.query(Author).filter(Author.full_name.like(f'%{search}%')).limit(limit).all()
+    
     if not author:
         return None
+    
     for x in author:
-        books_data.extend(x.books)
+        books = [book for book in x.books]
+        for book in books:
+            author_name = [author.full_name for author in book.authors]
+            schema_res = BookResponeWithAuthorName(title=book.title,
+                                    isbn=book.isbn,
+                                    year_release=book.year_release,
+                                    genre_id=book.genre_id,
+                                    price=book.price,
+                                    count=book.count,
+                                    author_name=author_name,
+                                    id=book.id)
+            books_res.append(schema_res)
 
-    return list(set(books_data)) 
+    return books_res 
     
 
 

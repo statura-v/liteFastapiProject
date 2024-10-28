@@ -16,6 +16,10 @@ class BookCreate(BaseBook):
 class BookUpdate(BookCreate):
     id: int
 
+class BookResponeWithAuthorName(BaseBook):
+    id: int
+    author_name: list[str]
+
 class GetBook(BookUpdate):
     pass
 

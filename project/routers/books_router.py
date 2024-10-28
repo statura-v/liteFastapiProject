@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db import get_db_session
-from schemas.simple_shemas import BookCreate, BookUpdate
+from schemas.simple_shemas import BookCreate, BookUpdate, BookResponeWithAuthorName
 from models.crud import create_book, get_book_by_id, delete_book_by_id, update_book
 from models.service import search_book_by_title, search_book_by_author
 from typing import List
@@ -58,12 +58,12 @@ def search_books_by_title(search: str, limit: int = 10, db: Session = Depends(ge
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@book_router.get('/search_author/{search}', response_model=List[BookUpdate])
-def search_book_by_author_name(search: str, db: Session = Depends(get_db_session)):
+@book_router.get('/search_author/{search}', response_model=List[BookResponeWithAuthorName])
+def search_book_by_author_name(search: str, limit: int = 10, db: Session = Depends(get_db_session)):
     try:
-        list_books = search_book_by_author(search, db)
+        list_books = search_book_by_author(search, limit, db)
         if not list_books:
-            raise HTTPException(status_code=404, detail="Not find book")
+            raise HTTPException(status_code=404, detail="Not find book By author")
         return list_books
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
