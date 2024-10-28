@@ -23,6 +23,10 @@ class BookResponeWithAuthorName(BaseBook):
 class GetBook(BookUpdate):
     pass
 
+class BookWithGenre(BookResponeWithAuthorName):
+    genre_name: str
+
+
 class BaseAuthor(BaseModel):
     full_name: str
 
