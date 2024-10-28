@@ -51,22 +51,40 @@ def create_book(database: Session, schema: BookCreate):
 
 
 def delete_book_by_id(database: Session, book_id: int):
+    author_ids = []
     book = database.query(Book).get(book_id)
     if not book:
         return None
+
+    for author in book.authors:
+        if author:
+            author_ids.append(author.id)
+
+    book_data = create_dict(
+        title=book.title,
+        isbn=book.isbn,
+        year_release=book.year_release,
+        count=book.count,
+        price=book.price,
+        genre_id=book.genre_id,
+        author_ids=author_ids
+    )
     database.delete(book)
     database.commit()
-    return book
+    return book_data
 
 
 def update_book(database: Session, book_id: int, schema: BookUpdate):
+    author_ids = []
     book = database.query(Book).get(book_id)
     if not book:
         return None
+    print(book)
     
     genre = database.query(Genre).get(schema.genre_id)
     if not genre:
         return None
+    print(genre)
     
     book.title = schema.title
     book.isbn = schema.isbn
@@ -79,13 +97,23 @@ def update_book(database: Session, book_id: int, schema: BookUpdate):
     for i in schema.author_ids:
         author = database.query(Author).get(i)
         if not author:
-            return None
+            continue
         book.authors.append(author)
-
+        author_ids.append(author.id)
+    
+    book_data = create_dict(
+        title=book.title,
+        isbn=book.isbn,
+        year_release=book.year_release,
+        count=book.count,
+        price=book.price,
+        genre_id=book.genre_id,
+        author_ids=author_ids
+    )
     database.commit()
     database.refresh(book)
 
-    return book
+    return book_data
 
 
 def create_author(database: Session, schema: AuthorCreate):

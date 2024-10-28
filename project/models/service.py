@@ -9,14 +9,14 @@ def search_book_by_title(search: str, database: Session):
 
 
 def search_book_by_author(search: str, database: Session):
-    books = []
+    books_data = []
     author = database.query(Author).filter(Author.full_name.like(f'{search}')).all()
     if not author:
-        return []
+        return None
     for x in author:
-        books.extend(x.books)
+        books_data.extend(x.books)
 
-    return list(set(books)) 
+    return list(set(books_data)) 
     
 
 
