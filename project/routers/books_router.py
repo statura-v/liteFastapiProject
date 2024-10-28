@@ -49,9 +49,9 @@ def update_book_by_id(book_id: int, book: BookCreate, db: Session = Depends(get_
         raise HTTPException(status_code=500, detail=str(e))
     
 @book_router.get("/search_title/{search}", response_model=List[BookUpdate])
-def search_books_by_title(search: str, db: Session = Depends(get_db_session)):
+def search_books_by_title(search: str, limit: int = 10, db: Session = Depends(get_db_session)):
     try:
-        list_books = search_book_by_title(search, db)
+        list_books = search_book_by_title(search, limit, db)
         if not list_books:
                raise HTTPException(status_code=404, detail="Not Find the books")
         return list_books
