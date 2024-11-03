@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db import get_db_session
-from schemas.simple_shemas import AuthorCreate, AuthorUpdate
+from schemas.author_shemas import AuthorCreate, AuthorUpdate
 from models.crud import *
 
 author_router = APIRouter(prefix="/author", tags=["Author operations"])

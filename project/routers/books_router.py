@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db import get_db_session
-from schemas.simple_shemas import BookCreate, BookUpdate, BookResponeWithAuthorName, BookWithGenre
+from schemas.book_shemas import BookCreate, BookUpdate, BookResponeWithAuthorName, BookWithGenre
+from schemas.simple_shemas import IntDate, LimitStatus
 from models.crud import create_book, get_book_by_id, delete_book_by_id, update_book
 from models.service import search_book_by_title, search_book_by_author, filter_book_by_genre
 from typing import List
@@ -48,30 +49,30 @@ def update_book_by_id(book_id: int, book: BookCreate, db: Session = Depends(get_
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@book_router.get("/search_title/{search}", response_model=List[BookUpdate])
-def search_books_by_title(search: str, limit: int = 10, db: Session = Depends(get_db_session)):
+@book_router.post("/search_title/{search}", response_model=List[BookUpdate])
+def search_books_by_title(search: str, setting: LimitStatus, db: Session = Depends(get_db_session)):
     try:
-        list_books = search_book_by_title(search, limit, db)
+        list_books = search_book_by_title(search=search, settings_schema=setting, database=db)
         if not list_books:
                raise HTTPException(status_code=404, detail="Not Find the books")
         return list_books
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@book_router.get('/search_author/{search}', response_model=List[BookResponeWithAuthorName])
-def search_book_by_author_name(search: str, limit: int = 10, db: Session = Depends(get_db_session)):
+@book_router.post('/search_author/{search}', response_model=List[BookResponeWithAuthorName])
+def search_book_by_author_name(search: str, setting: LimitStatus, flag: bool=True, db: Session = Depends(get_db_session)):
     try:
-        list_books = search_book_by_author(search, limit, db)
+        list_books = search_book_by_author(search, setting, db, flag)
         if not list_books:
             raise HTTPException(status_code=404, detail="Not find book By author")
         return list_books
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@book_router.get('/search_genre/{search}', response_model=List[BookWithGenre])
-def filter_book_by_genre_name(search: str, limit: int = 10, asc: bool = True, db: Session = Depends(get_db_session)):
+@book_router.post('/search_genre/{search}', response_model=List[BookWithGenre])
+def filter_book_by_genre_name(search: str, setting: LimitStatus, asc: bool = True, db: Session = Depends(get_db_session)):
     try:
-        list_books = filter_book_by_genre(search=search, limit=limit, asc_flag=asc, database=db)
+        list_books = filter_book_by_genre(search=search, settings_schema=setting, asc_flag=asc, database=db)
         if not list_books:
             raise HTTPException(status_code=404, detail="Not find book By author")
         return list_books

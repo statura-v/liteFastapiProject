@@ -1,14 +1,26 @@
 from sqlalchemy.orm import Session
 from db import get_db_session 
 from models.db_models import Book, Author, Genre
-from schemas.simple_shemas import *
+from schemas.book_shemas import BookCreate, BookUpdate
+from schemas.author_shemas import AuthorCreate, AuthorUpdate
+from schemas.simple_shemas import GenreCreate
+from sqlalchemy import func, asc, desc, and_
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload, joinedload
+
+from models.service import return_book_with_author_schema_id
 
 def create_dict(**kwargs):
     return kwargs
 
 
 def get_book_by_id(database: Session, book_id: int):
-    return database.query(Book).get(book_id)
+    query=(
+        select(Book).filter(Book.id == book_id)
+    )
+    book = database.execute(query).scalars().all()
+    schema_res =  return_book_with_author_schema_id(book)
+    return schema_res[0] #так как одна книга
 
 
 def create_book(database: Session, schema: BookCreate):
