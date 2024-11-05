@@ -27,5 +27,5 @@ class GetBook(BookUpdate):
     pass
 
 
-class BookWithGenre(BookResponeWithAuthorName):
+class BookWithGenreAndAuthor(BookResponeWithAuthorName):
     genre_name: str
